@@ -1,14 +1,14 @@
 import { sequelize } from "../index.js";
 import { QueryTypes } from "sequelize";
 
-const sistemasController = {};
+const digitalController = {};
 
 /**
  * -----------------------------------------------------
  * Function - getLaboratorios
  * -----------------------------------------------------
  */
-sistemasController.getLaboratorios = async (req, res) => {
+digitalController.getLaboratorios = async (req, res) => {
   const response = await sequelize.query(
     "SELECT * FROM Laboratorios;",
     {
@@ -27,7 +27,7 @@ sistemasController.getLaboratorios = async (req, res) => {
  * Function - getLaboratorioById
  * -----------------------------------------------------
  */
-sistemasController.getLaboratorioById = async (req, res) => {
+digitalController.getLaboratorioById = async (req, res) => {
   const { idLaboratorio } = req.params;
 
   const response = await sequelize.query(
@@ -49,7 +49,7 @@ sistemasController.getLaboratorioById = async (req, res) => {
  * Function - getEnsayosUsuario
  * -----------------------------------------------------
  */
-sistemasController.getEnsayosUsuario = async (req, res) => {
+digitalController.getEnsayosUsuario = async (req, res) => {
   console.log(req.params);
     
   const { idLaboratorio, idUsuario } = req.params;
@@ -73,9 +73,9 @@ sistemasController.getEnsayosUsuario = async (req, res) => {
       newEnsayo.Fecha = ensayo.Fecha
       newEnsayo.Hora = ensayo.Hora
       newEnsayo.velocidad = ensayo.datosEntrada.velocidad
-      newEnsayo.cantidadBitDato = ensayo.datosEntrada.cantidadBitDato
+      newEnsayo.bitsDatos = ensayo.datosEntrada.bitsDatos
       newEnsayo.paridad = ensayo.datosEntrada.paridad
-      newEnsayo.cantidadBitParada = ensayo.datosEntrada.cantidadBitParada
+      newEnsayo.bitsParada = ensayo.datosEntrada.bitsParada
       newEnsayo.mensaje = ensayo.datosEntrada.mensaje
       dataParsed.push(newEnsayo)
     })
@@ -84,9 +84,10 @@ sistemasController.getEnsayosUsuario = async (req, res) => {
       const newEnsayo = {}
       newEnsayo.Fecha = ensayo.Fecha
       newEnsayo.Hora = ensayo.Hora
-      newEnsayo.distanciaLente1 = ensayo.datosEntrada.distanciaLente1
-      newEnsayo.distanciaLenteLente = ensayo.datosEntrada.distanciaLenteLente
-      newEnsayo.distanciaPantalla = ensayo.datosEntrada.distanciaPantalla
+      newEnsayo.frecuencia = ensayo.datosEntrada.frecuencia
+      newEnsayo.memoria = ensayo.datosEntrada.memoria
+      newEnsayo.readWrite = ensayo.datosEntrada.readWrite
+      newEnsayo.mensaje = ensayo.datosEntrada.mensaje
       dataParsed.push(newEnsayo)
     })
   }
@@ -97,4 +98,4 @@ sistemasController.getEnsayosUsuario = async (req, res) => {
   await res.send(JSON.stringify(dataParsed));
 };
 
-export { sistemasController };
+export { digitalController };

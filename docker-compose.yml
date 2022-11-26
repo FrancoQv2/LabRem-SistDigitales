@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    container_name: sistemasDigitales-db
+    container_name: digital-db
     image: mysql:8.0.30
     restart: unless-stopped
     env_file: ./.env
@@ -12,15 +12,15 @@ services:
     ports:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
-      - ../volumenes/sistemasDigitales-db:/var/lib/mysql
+      - ../volumenes/digital-db:/var/lib/mysql
     networks:
       labrem:
         aliases:
-          - sistemasDigitales-db
+          - digital-db
   # server:
   #   depends_on:
   #     - db
-  #   container_name: sistemasDigitales-server
+  #   container_name: digital-server
   #   build: ./server
   #   restart: unless-stopped
   #   env_file: ./.env
@@ -39,7 +39,7 @@ services:
   #   networks:
   #     labrem:
   #       aliases:
-  #         - sistemasDigitales-server
+  #         - digital-server
 networks:
   labrem:
     name: labrem-net

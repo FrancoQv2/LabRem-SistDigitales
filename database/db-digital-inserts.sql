@@ -2,7 +2,7 @@
 -- Insercion de Datos
 -- -----------------------------------------------------
 
-USE LabRem_SistemasDigitales;
+USE LabRem_Digitales;
 
 -- -----------------------------------------------------
 -- Laboratorios

@@ -9,7 +9,7 @@ import morgan from "morgan";
 import cors from "cors";
 import Sequelize from "sequelize";
 
-import sistemasRouter from "./routes/sistemasDigitales.routes.js";
+import digitalRouter from "./routes/digital.routes.js";
 
 const app = expressServer();
 const PORT = process.env.SERVER_PORT || 3000;
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use("/api/sistemas", sistemasRouter);
+app.use("/api/digital", digitalRouter);
 
 // app.use("/public-key", "id_rsa.pub") // formato x.509
 

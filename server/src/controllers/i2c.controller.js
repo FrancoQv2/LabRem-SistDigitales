@@ -7,14 +7,14 @@ const i2cController = {};
 
 /**
  * -----------------------------------------------------
- * Function - getEnsayosi2c
+ * Function - getEnsayosI2C
  * -----------------------------------------------------
  */
-i2cController.getEnsayosi2c = async (req, res) => {
+i2cController.getEnsayosI2C = async (req, res) => {
   console.log(req.params);
 
   const response = await sequelize.query(
-    "SELECT idUsuario, DATE(fechaHora) AS Fecha, TIME(fechaHora) AS Hora, datosEntrada, datosSalida FROM Ensayos WHERE idLaboratorio = 2;",
+    "SELECT idUsuario, DATE(fechaHora) AS Fecha, TIME(fechaHora) AS Hora, datosEntrada, datosSalida FROM Ensayos WHERE idLaboratorio = :idLaboratorio;",
     {
       replacements: {
         idLaboratorio: idLaboratorio
@@ -33,8 +33,8 @@ i2cController.getEnsayosi2c = async (req, res) => {
     newEnsayo.Hora = ensayo.Hora
     newEnsayo.frecuencia = ensayo.datosEntrada.frecuencia
     newEnsayo.memoria = ensayo.datosEntrada.memoria
-    newEnsayo.lecturaEscritura = ensayo.datosEntrada.lecturaEscritura
-    newEnsayo.datos = ensayo.datosEntrada.datos
+    newEnsayo.readWrite = ensayo.datosEntrada.readWrite
+    newEnsayo.mensaje = ensayo.datosEntrada.mensaje
     dataParsed.push(newEnsayo)
   })
   
@@ -44,16 +44,16 @@ i2cController.getEnsayosi2c = async (req, res) => {
 
 /**
  * -----------------------------------------------------
- * Function - postLabi2c
+ * Function - postLabI2C
  * -----------------------------------------------------
  */
-i2cController.postLabi2c = (req, res) => {
+i2cController.postLabI2C = (req, res) => {
   const {
     idUsuario, 
     frecuencia,
     memoria,
-    lecturaEscritura, //0 lectura, 1 escritura
-    datos 
+    readWrite, // 0 lectura, 1 escritura
+    mensaje
   } = req.body;
 
   if (frecuencia < 0) {
@@ -65,8 +65,8 @@ i2cController.postLabi2c = (req, res) => {
     const datosEntrada = {
       frecuencia: frecuencia,
       memoria: memoria,
-      lecturaEscritura: lecturaEscritura,
-      datos,datos
+      readWrite: readWrite,
+      mensaje
     };
 
     const datosSalida = {
@@ -87,7 +87,7 @@ i2cController.postLabi2c = (req, res) => {
       );
       res.status(200).json("Parámetros correctos");
     } catch (error) {
-      console.error("-> ERROR postLabi2c:", error);
+      console.error("-> ERROR postLabI2C:", error);
     }
   }
 };
