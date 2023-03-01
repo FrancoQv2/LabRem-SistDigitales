@@ -4,8 +4,8 @@ import { uartController } from "../controllers/uart.controller.js";
 import { i2cController } from "../controllers/i2c.controller.js";
 
 const { getLaboratorios, getLaboratorioById, getEnsayosUsuario, getDeleteEnsayo, getDeleteLaboratorio, postLab, getEnsayos, postModLab } = digitalController;
-const { postLabUART } = uartController;
-const { postLabI2C } = i2cController;
+const { postEnsayoUART } = uartController;
+const { postEnsayoI2C } = i2cController;
 
 const digitalRouter = express.Router();
 
@@ -16,9 +16,9 @@ const digitalRouter = express.Router();
  */
 digitalRouter.route("/").get(getLaboratorios).post(postLab);
 
-digitalRouter.route("/i2c").post(postLabI2C);
+digitalRouter.route("/i2c").post(postEnsayoI2C);
  
-digitalRouter.route("/uart").post(postLabUART);
+digitalRouter.route("/uart").post(postEnsayoUART);
 
 digitalRouter.route("/modificarLab").post(postModLab); //para el grupo de gestion
 

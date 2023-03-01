@@ -10,7 +10,7 @@ const i2cController = {};
  * Function - postLabI2C
  * -----------------------------------------------------
  */
-i2cController.postLabI2C = (req, res) => {
+i2cController.postEnsayoI2C = (req, res) => {
   const {
     idUsuario, 
     frecuencia,

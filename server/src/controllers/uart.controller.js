@@ -9,7 +9,7 @@ const uartController = {};
  * Function - postLabUART
  * -----------------------------------------------------
  */
-uartController.postLabUART = (req, res) => {
+uartController.postEnsayoUART = (req, res) => {
   console.log(req.body);
   const {
     idUsuario,
