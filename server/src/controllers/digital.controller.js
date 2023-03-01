@@ -71,7 +71,7 @@ digitalController.getEnsayosUsuario = async (req, res) => {
       newEnsayo.mensaje = ensayo.datosEntrada.mensaje
       dataParsed.push(newEnsayo)
     })
-  } else if (idLaboratorio == 2) {//i2c
+  } else if (idLaboratorio == 2) {
     response.map((ensayo)=>{
       const newEnsayo = {}
       newEnsayo.Fecha = ensayo.Fecha
@@ -82,7 +82,6 @@ digitalController.getEnsayosUsuario = async (req, res) => {
       newEnsayo.datos = ensayo.datosEntrada.datos
       dataParsed.push(newEnsayo)
     })
- 
   }
   console.log("--------------------------------");
   console.log(response);
@@ -90,6 +89,7 @@ digitalController.getEnsayosUsuario = async (req, res) => {
   
   await res.send(JSON.stringify(dataParsed));
 };
+
 
 /**
  * @param {number} idEnsayo
