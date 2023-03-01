@@ -7,10 +7,10 @@ const i2cController = {};
 
 /**
  * -----------------------------------------------------
- * Function - postLabi2c
+ * Function - postLabI2C
  * -----------------------------------------------------
  */
-i2cController.postLabi2c = (req, res) => {
+i2cController.postLabI2C = (req, res) => {
   const {
     idUsuario, 
     frecuencia,
@@ -49,7 +49,7 @@ i2cController.postLabi2c = (req, res) => {
       );
       res.status(200).json("Parámetros correctos");
     } catch (error) {
-      console.error("-> ERROR postLabi2c:", error);
+      console.error("-> ERROR postLabI2C:", error);
     }
   }
 };
