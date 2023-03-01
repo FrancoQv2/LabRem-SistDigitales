@@ -7,43 +7,6 @@ const i2cController = {};
 
 /**
  * -----------------------------------------------------
- * Function - getEnsayosi2c
- * -----------------------------------------------------
- */
-i2cController.getEnsayosi2c = async (req, res) => {
-  console.log(req.params);
-
-  const response = await sequelize.query(
-    "SELECT idUsuario, DATE(fechaHora) AS Fecha, TIME(fechaHora) AS Hora, datosEntrada, datosSalida FROM Ensayos WHERE idLaboratorio = 2;",
-    {
-      replacements: {
-        idLaboratorio: idLaboratorio
-      },
-      type: QueryTypes.SELECT,
-    }
-  );
-
-  console.log(response);
-  
-  let dataParsed = [];
-  response.map((ensayo)=>{
-    const newEnsayo = {}
-    newEnsayo.Usuario = ensayo.idUsuario
-    newEnsayo.Fecha = ensayo.Fecha
-    newEnsayo.Hora = ensayo.Hora
-    newEnsayo.frecuencia = ensayo.datosEntrada.frecuencia
-    newEnsayo.memoria = ensayo.datosEntrada.memoria
-    newEnsayo.lecturaEscritura = ensayo.datosEntrada.lecturaEscritura
-    newEnsayo.datos = ensayo.datosEntrada.datos
-    dataParsed.push(newEnsayo)
-  })
-  
-  console.log(dataParsed);
-  await res.send(dataParsed);
-};
-
-/**
- * -----------------------------------------------------
  * Function - postLabi2c
  * -----------------------------------------------------
  */
@@ -52,7 +15,7 @@ i2cController.postLabi2c = (req, res) => {
     idUsuario, 
     frecuencia,
     memoria,
-    lecturaEscritura, //0 lectura, 1 escritura
+    accion, //0 lectura, 1 escritura
     datos 
   } = req.body;
 
@@ -65,7 +28,7 @@ i2cController.postLabi2c = (req, res) => {
     const datosEntrada = {
       frecuencia: frecuencia,
       memoria: memoria,
-      lecturaEscritura: lecturaEscritura,
+      accion: accion,
       datos,datos
     };
 
@@ -74,15 +37,14 @@ i2cController.postLabi2c = (req, res) => {
     
     try {
       sequelize.query(
-        "INSERT INTO Ensayos(idUsuario,datosEntrada,datosSalida,idLaboratorio) VALUES(:idUsuario,:datosEntrada,:datosSalida,:idLaboratorio);",
+        "CALL sp_crearEnsayo (:idUsuario,:datosEntrada,:datosSalida,:idLaboratorio);",
         {
           replacements: {
             idUsuario: idUsuario,
             datosEntrada: JSON.stringify(datosEntrada),
             datosSalida: JSON.stringify(datosSalida),
             idLaboratorio: idLaboratorio,
-          },
-          type: QueryTypes.INSERT,
+          }
         }
       );
       res.status(200).json("Parámetros correctos");

@@ -1,5 +1,5 @@
 {
-  "name": "labrem-sistemasdigitales",
+  "name": "labrem-digital",
   "version": "1.0.0",
   "description": "Servidor Node.js utilizado para las aplicaciones de sistemas Digitales",
   "main": "index.js",
