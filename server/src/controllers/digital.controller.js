@@ -65,8 +65,8 @@ digitalController.getEnsayosUsuario = async (req, res) => {
       newEnsayo.Fecha = ensayo.Fecha
       newEnsayo.Hora = ensayo.Hora
       newEnsayo.velocidad = ensayo.datosEntrada.velocidad
-      newEnsayo.cantidadBitDato = ensayo.datosEntrada.cantidadBitDato
       newEnsayo.paridad = ensayo.datosEntrada.paridad
+      newEnsayo.cantidadBitDato = ensayo.datosEntrada.cantidadBitDato
       newEnsayo.cantidadBitParada = ensayo.datosEntrada.cantidadBitParada
       newEnsayo.mensaje = ensayo.datosEntrada.mensaje
       dataParsed.push(newEnsayo)
@@ -145,7 +145,37 @@ digitalController.getEnsayos = async (req, res) => {
     }
   );
   
-  await res.send(response);
+  let dataParsed = [];
+  
+  if (idLaboratorio == 1) {//uart
+    response.map((ensayo)=>{
+      const newEnsayo = {}
+      newEnsayo.Fecha = ensayo.Fecha
+      newEnsayo.Hora = ensayo.Hora
+      newEnsayo.velocidad = ensayo.datosEntrada.velocidad
+      newEnsayo.paridad = ensayo.datosEntrada.paridad
+      newEnsayo.cantidadBitDato = ensayo.datosEntrada.cantidadBitDato
+      newEnsayo.cantidadBitParada = ensayo.datosEntrada.cantidadBitParada
+      newEnsayo.mensaje = ensayo.datosEntrada.mensaje
+      dataParsed.push(newEnsayo)
+    })
+  } else if (idLaboratorio == 2) {
+    response.map((ensayo)=>{
+      const newEnsayo = {}
+      newEnsayo.Fecha = ensayo.Fecha
+      newEnsayo.Hora = ensayo.Hora
+      newEnsayo.frecuencia = ensayo.datosEntrada.frecuencia
+      newEnsayo.memoria = ensayo.datosEntrada.memoria
+      newEnsayo.accion = ensayo.datosEntrada.accion
+      newEnsayo.datos = ensayo.datosEntrada.datos
+      dataParsed.push(newEnsayo)
+    })
+  }
+  console.log("--------------------------------");
+  console.log(response);
+  console.log("--------------------------------");
+  
+  await res.send(JSON.stringify(dataParsed));
 };
 
 /**

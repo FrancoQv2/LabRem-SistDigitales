@@ -1,5 +1,5 @@
-import { sequelize } from "../index.js";
-
+import { sequelize, delay } from "../index.js";
+import axios from "axios";
 const idLaboratorio = 1;
 
 const uartController = {};
@@ -9,14 +9,11 @@ const uartController = {};
  * Function - postLabUART
  * -----------------------------------------------------
  */
-uartController.postEnsayoUART = (req, res) => {
-  console.log(req.body);
+uartController.postEnsayoUART = async (req, res) => {
   const {
     idUsuario,
     velocidad,
-    cantidadBitDato,
-    cantidadBitParada,
-    paridad,  // false impar, true par
+    pulsadores,
     mensaje
   } = req.body;
 
@@ -35,25 +32,84 @@ uartController.postEnsayoUART = (req, res) => {
        velocidad != 921600 ) {
     console.log("la velocidad seteada no es uno de los valores validos");
     res.status(400).json("la velocidad seteada no es uno de los valores validos");
-  } else if ( cantidadBitDato != 5 &&
-              cantidadBitDato != 6 &&
-              cantidadBitDato != 7 &&
-              cantidadBitDato != 8 &&
-              cantidadBitDato != 9 ) {
-      console.log("la cantidad de bits del dato no es 5, 6, 7, 8 o 9");
-      res.status(400).json("la cantidad de bits del dato no es 5, 6, 7, 8 o 9");
-  } else if ( cantidadBitParada != 0 &&
-              cantidadBitParada != 1 &&
-              cantidadBitParada != 2) {
-      console.log("la cantidad de bit de parada no es 0, 1 o 2");
-      res.status(400).json("la cantidad de bit de parada no es 0, 1 o 2");
+  } else {
+    const url='http://192.168.100.75:3031/api/control/arduino';//cambiar por ip arduino
+    const body={
+      "Estado" : [3,false,true],
+      "Analogico" : [1,1,1]
+    };
+    let respuestaGet;
+    let Msj='';
+   try {
+     let i=0;
+     do {
+       respuestaGet = await axios.get(`${url}/${i}`);
+       await delay(3000);
+       i = i+1;
+     } while (respuestaGet.data.Estado[2]);
+     switch (respuestaGet.data.Error) {
+       case 0:
+         
+         Msj="laboratorio ok";
+         break;
+       case 1:
+         Msj="Error en el angulo limite de azimut";
+         break;
+       case 2:
+         Msj="Error en el angulo limite de elevacion";
+         break;
+       default:
+         Msj="Error de laboratorio incorrecto";
+         break;
+     }
+     res.status(200).json(Msj);
+    } catch (error) {
+      console.error("-> ERROR postensayoUART:", error);
+    }
+  }
+};
+
+/**
+ * -----------------------------------------------------
+ * Function - postLabUART
+ * -----------------------------------------------------
+ */
+uartController.postEnsayoUARTSave = (req, res) => {
+  const {
+    idUsuario,
+    velocidad,
+    cantidadBitDato,
+    paridad,// false par, true impar
+    cantidadBitParada,
+    mensaje
+  } = req.body;
+
+  if ( velocidad != 300    &&
+       velocidad != 600    &&
+       velocidad != 1200   &&
+       velocidad != 2400   &&
+       velocidad != 4800   &&
+       velocidad != 9600   &&
+       velocidad != 19200  &&
+       velocidad != 38400  &&
+       velocidad != 57600  &&
+       velocidad != 115200 &&
+       velocidad != 230400 &&
+       velocidad != 460800 &&
+       velocidad != 921600 ) {
+    console.log("la velocidad seteada no es uno de los valores validos");
+    res.status(400).json("la velocidad seteada no es uno de los valores validos");
+  } else if ( cantidadBitDato < 1 ) {
+    res.status(400).json("la cantidad de bits del dato es 0 o negativo");
+  } else if ( cantidadBitParada != 0 && cantidadBitParada != 1 && cantidadBitParada != 2) {
+res.status(400).json("la cantidad de bit de parada no es 0, 1 o 2");
   } else {
 
     const datosEntrada = {
       velocidad: velocidad,
       cantidadBitDato: cantidadBitDato,
-      cantidadBitParada: cantidadBitParada,
       paridad: paridad,
+      cantidadBitParada: cantidadBitParada,
       mensaje: mensaje
     };
     const datosSalida = {
@@ -70,9 +126,9 @@ uartController.postEnsayoUART = (req, res) => {
           }
         }
       );
-      res.status(200).json("Parámetros correctos");
+      res.status(200).json("guardado en base de datos");
     } catch (error) {
-      console.error("-> ERROR postLabUART:", error);
+      console.error("-> ERROR postEnsayoUARTSave:", error);
     }
   }
 };

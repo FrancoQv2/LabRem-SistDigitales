@@ -140,7 +140,7 @@ SALIR: BEGIN
 		SELECT'el codigo de laboratorio es null';
 		LEAVE SALIR;
     ELSE
-		SELECT Ensayos.idEnsayo,fechaHora,Ensayos.datosEntrada AS datosEntrada,Ensayos.datosSalida as datosSalida FROM Ensayos where codLaboratorio = codLaboratorioN ORDER BY fechaHora ASC;
+		SELECT Ensayos.idEnsayo,DATE(fechaHora) AS Fecha, TIME(fechaHora) AS Hora,Ensayos.datosEntrada AS datosEntrada,Ensayos.datosSalida as datosSalida FROM Ensayos where codLaboratorio = codLaboratorioN ORDER BY fechaHora ASC;
     END IF;
 END//
 DELIMITER ;
