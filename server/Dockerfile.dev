@@ -5,7 +5,6 @@ WORKDIR /usr/src/server
 # Debe hacer referencia al puerto dentro del container
 ENV SERVER_PORT=3000
 ENV LOCALHOST_PORT=3034
-ENV LOCALHOST_PORT=3034
 
 ENV DB_HOST=digital-db
 ENV DB_DIALECT=mysql
@@ -15,7 +14,7 @@ ENV DB_PASSWORD=123456
 
 ENV DB_PORT=3306
 
-ENV DB_NAME=LabRem_SistemasDigitales
+ENV DB_NAME=LabRem_Digital
 
 RUN npm install -g nodemon
 
