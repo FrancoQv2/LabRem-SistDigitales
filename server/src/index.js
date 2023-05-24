@@ -27,13 +27,7 @@ app.use("/api/digital", digital)
 
 // Levantamos el servidor para que escuche peticiones
 app.listen(PORT, () => {
-  console.log(`Server on container port ${PORT}`)
-  console.log(`Server on localhost port ${process.env.LOCALHOST_PORT}`)
-  // console.log("----------------------")
+  console.log(`LabRem Digital - Server on ${process.env.LOCALHOST_PORT}:${PORT}`)
 })
-
-export function delay(time) {
-  return new Promise(resolve => setTimeout(resolve, time))
-} 
 
 export const db = dbConnection
