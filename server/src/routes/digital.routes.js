@@ -1,45 +1,53 @@
-import express from "express";
-import { digitalController } from "../controllers/digital.controller.js";
-import { uartController } from "../controllers/uart.controller.js";
-import { i2cController } from "../controllers/i2c.controller.js";
+import express from "express"
+import { digitalController } from "../controllers/digital.controller.js"
+import { uartController } from "../controllers/uart.controller.js"
+import { i2cController } from "../controllers/i2c.controller.js"
 
-const { getLaboratorios, getLaboratorioById, getEnsayosUsuario, getDeleteEnsayo, getDeleteLaboratorio, postLab, getEnsayos, postModLab } = digitalController;
-const { postEnsayoUART,postEnsayoUARTSave } = uartController;
-const { postEnsayoI2C,postEnsayoI2CSave } = i2cController;
+const { getLaboratorios, getLaboratorio, getEnsayosUsuario, deleteEnsayo, deleteLaboratorio, postLaboratorio, getEnsayos, updateLaboratorio } = digitalController
+const { getEnsayosUART, postEnsayoUART } = uartController
+const { getEnsayosI2C, postEnsayoI2C } = i2cController
 
-const digitalRouter = express.Router();
+const digitalRouter = express.Router()
 
-/**
- * -----------------------------------------------------
- * Rutas - Laboratorios de sistemas digitales
- * -----------------------------------------------------
- */
-digitalRouter.route("/").get(getLaboratorios).post(postLab);
+// -----------------------------------------------------
+// Endpoints - Laboratorios de Sistemas Digitales
+// -----------------------------------------------------
 
-digitalRouter.route("/i2c").post(postEnsayoI2C);
+digitalRouter.route("/")
+    .get(getLaboratorios)
+    .post(postLaboratorio)
 
-digitalRouter.route("/i2csave").post(postEnsayoI2CSave);
- 
-digitalRouter.route("/uart").post(postEnsayoUART);
+digitalRouter.route("/uart")
+    .get(getEnsayosUART)
+    .post(postEnsayoUART)
 
-digitalRouter.route("/uartsave").post(postEnsayoUARTSave);
+digitalRouter.route("/i2c")
+    .get(getEnsayosI2C)
+    .post(postEnsayoI2C)
 
-digitalRouter.route("/modificarLab").post(postModLab); //para el grupo de gestion
+// -----------------------------------------------------
+// Endpoints para Gestión
+// -----------------------------------------------------
 
-/**
- * -----------------------------------------------------
- * Rutas con pasaje de parametro en la URL
- * -----------------------------------------------------
- */
-digitalRouter.route("/:idLaboratorio").get(getLaboratorioById);
+digitalRouter.route("/laboratorios/:idLaboratorio")
+    .get(getLaboratorio)
+    .post(updateLaboratorio)
+    .delete(deleteLaboratorio)
 
-digitalRouter.route("/delete/ensayo/:idEnsayo").get(getDeleteEnsayo); //para el grupo de gestion
+digitalRouter.route("/ensayos/:idLaboratorio")
+    .get(getEnsayos)
 
-digitalRouter.route("/delete/laboratorio/:idLaboratorio").get(getDeleteLaboratorio); //para el grupo de gestion
+digitalRouter.route("/ensayos/:idEnsayo")
+    .delete(deleteEnsayo)
 
-digitalRouter.route("/ensayos/:idLaboratorio").get(getEnsayos); //para el grupo de gestion
+// -----------------------------------------------------
+// Endpoints con pasaje de parametro en la URL
+// -----------------------------------------------------
 
-digitalRouter.route("/:idLaboratorio/:idUsuario").get(getEnsayosUsuario);
+digitalRouter.route("/:idLaboratorio")
+    .get(getLaboratorio)
 
+digitalRouter.route("/:idLaboratorio/:idUsuario")
+    .get(getEnsayosUsuario)
 
-export default digitalRouter;
+export default digitalRouter
