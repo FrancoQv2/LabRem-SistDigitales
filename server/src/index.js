@@ -11,6 +11,8 @@ import cors from "cors"
 import { dbConnection } from "./db/dbconfig.js"
 
 import digital from "./routes/digital.routes.js"
+import { validacionController } from "./controllers/validacion.controller.js"
+const {verificar} = validacionController
 
 const app = expressServer()
 const PORT = process.env.SERVER_PORT || 3000
@@ -21,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
 
+app.use('/api/',verificar)
 app.use("/api/digital", digital)
 
 // ---------------------------------------------------------------

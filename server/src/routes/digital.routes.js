@@ -2,10 +2,12 @@ import express from "express"
 import { digitalController } from "../controllers/digital.controller.js"
 import { uartController } from "../controllers/uart.controller.js"
 import { i2cController } from "../controllers/i2c.controller.js"
+import { validacionController } from "../controllers/validacion.controller.js"
 
 const { getLaboratorios, getLaboratorio, getEnsayosUsuario, deleteEnsayo, deleteLaboratorio, postLaboratorio, getEnsayos, updateLaboratorio } = digitalController
 const { getEnsayosUART, postEnsayoUART } = uartController
 const { getEnsayosI2C, postEnsayoI2C } = i2cController
+const {verificar} = validacionController
 
 const digitalRouter = express.Router()
 
@@ -24,6 +26,12 @@ digitalRouter.route("/uart")
 digitalRouter.route("/i2c")
     .get(getEnsayosI2C)
     .post(postEnsayoI2C)
+
+// ------------------------------------------------------------
+// Endpoints - Laboratorios de Física Experimental Básica token
+// ------------------------------------------------------------
+
+digitalRouter.route("/verificar").post(verificar);
 
 // -----------------------------------------------------
 // Endpoints para Gestión
