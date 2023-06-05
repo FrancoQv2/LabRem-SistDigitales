@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';        //Manejo de Tokens
 const validacionController = {};
 validacionController.verificar = (req, res, next) => {
     const tokenH = req.headers['authorization'];
-    const {datos} = req.body;
+    const {siguiente} = req.body;
+    console.log(tokenH)
     if (tokenH) {
         const token = tokenH.split(' ')[1];
         jwt.verify(token,'-----BEGIN PUBLIC KEY-----\n'+
@@ -20,10 +21,10 @@ validacionController.verificar = (req, res, next) => {
                return res.status(403).json("Token no válido");
             } 
                 // console.log('JWT verified successfully: ', decoded);
-                if (datos) {
+                if (siguiente) {
                     return res.status(200).json(decoded);
                 }
-                console.log(datos) 
+                
                 next();
         });
     } else {

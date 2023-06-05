@@ -58,7 +58,7 @@ i2cController.postEnsayoI2C = (req, res) => {
         direccion,      // Notación 0x
         datos
     } = req.body
-
+console.log(req.body)
     if (
         frecuencia != 100 && 
         frecuencia != 400 && 
