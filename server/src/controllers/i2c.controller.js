@@ -1,10 +1,6 @@
 import { db } from "../index.js"
 
-import { delay } from "../lib/delay.js"
-import axios from "axios"
-
 const idLaboratorio = 2
-const URL_ARDUINO = 'http://192.168.100.75:3031/api/control/arduino'//cambiar por ip arduino
 
 const queries = {
     getEnsayosI2C: "CALL sp_dameEnsayosI2C();",
@@ -21,34 +17,35 @@ i2cController.getEnsayosI2C = async (req, res) => {
     console.log("--------------------")
     console.log(`--> getEnsayosI2C - ${JSON.stringify(req.params)}`)
 
-    const data = await db.query(
-        queries.getEnsayosI2C
-    )
+    try {
+        const data = await db.query(
+            queries.getEnsayosI2C
+        )
 
-    let dataParsed = []
-    data.map((ensayo) => {
-        const newEnsayo = {}
-        newEnsayo.Usuario   = ensayo.idUsuario
-        newEnsayo.Fecha     = ensayo.Fecha
-        newEnsayo.Hora      = ensayo.Hora
-        // newEnsayo.velocidad  = ensayo.datosEntrada.velocidad
-        // newEnsayo.pulsadores = ensayo.datosEntrada.pulsadores
-        // newEnsayo.mensaje    = ensayo.datosEntrada.mensaje
-        newEnsayo.accion        = ensayo.datosEntrada.accion
-        newEnsayo.frecuencia    = `${ensayo.datosEntrada.frecuencia} KHz`
-        newEnsayo.direccion     = ensayo.datosEntrada.direccion
-        newEnsayo.datos         = ensayo.datosEntrada.datos
-        dataParsed.push(newEnsayo)
-    })
+        let dataParsed = []
+        data.map((ensayo) => {
+            const newEnsayo = {}
+            newEnsayo.Usuario   = ensayo.idUsuario
+            newEnsayo.Fecha     = ensayo.Fecha
+            newEnsayo.Hora      = ensayo.Hora
+            newEnsayo.accion        = ensayo.datosEntrada.accion
+            newEnsayo.frecuencia    = (ensayo.datosEntrada.frecuencia != 1000) ? `${ensayo.datosEntrada.frecuencia} KHz` : `${ensayo.datosEntrada.frecuencia/1000} MHz`
+            newEnsayo.direccion     = ensayo.datosEntrada.direccion
+            newEnsayo.datos         = ensayo.datosEntrada.datos
+            dataParsed.push(newEnsayo)
+        })
 
-    await res.status(200).send(dataParsed)
+        await res.status(200).send(dataParsed)
+    } catch (error) {
+        res.status(404).send("No hay ensayos realizados en este laboratorio!")
+    }
 }
 
 // -----------------------------------
 // Métodos POST
 // -----------------------------------
 
-i2cController.postEnsayoI2C = (req, res) => {
+i2cController.postEnsayoI2C = async (req, res) => {
     console.log(`-\n--> postEnsayoI2C - ${JSON.stringify(req.body)}\n---`)
 
     const {
@@ -56,8 +53,11 @@ i2cController.postEnsayoI2C = (req, res) => {
         accion,         // Lectura, Escritura
         frecuencia,     // 100 KHz, 400 KHz, 1000 KHz, 
         direccion,      // Notación 0x
-        datos
+        datos,
+        pulsadores
     } = req.body
+
+    console.log(req.body);
 
     if (
         frecuencia != 100 && 
@@ -65,36 +65,44 @@ i2cController.postEnsayoI2C = (req, res) => {
         frecuencia != 1000
     ) {
         res.status(400).json("La frecuencia no es válida!")
-    } else if (direccion < 0) {
+    } else if (
+        direccion < 0
+    ) {
         res.status(400).json("La dirección de memoria no es válida!")
+    } else if (
+        !Array.isArray(pulsadores) || 
+        pulsadores.length !== 4
+    ){
+        res.status(400).json("Los datos de los pulsadores no son válidos")
     } else {
 
         const datosEntrada = {
             accion:     accion,
             frecuencia: frecuencia,
             direccion:  `0x${direccion.toUpperCase()}`,
-            datos:      datos
+            datos:      (datos === "") ? "-" : `0b${datos.toUpperCase()}`,
+            pulsadores: pulsadores,
         }
 
-        const datosSalida = {
-            // indicadores: pulsadores
-        }
+        const datosSalida = {}
 
         try {
-            db.query(
+            await db.query(
                 queries.postEnsayoI2C,
                 {
                     replacements: {
-                        idUsuario: idUsuario,
-                        datosEntrada: JSON.stringify(datosEntrada),
-                        datosSalida: JSON.stringify(datosSalida),
-                        idLaboratorio: idLaboratorio,
+                        idUsuario:      idUsuario,
+                        datosEntrada:   JSON.stringify(datosEntrada),
+                        datosSalida:    JSON.stringify(datosSalida),
+                        idLaboratorio:  idLaboratorio,
                     }
                 }
             )
-            res.status(200).json("guardado en base de datos")
+
+            res.status(200).json("Parámetros correctos. Guardado en DB")
         } catch (error) {
             console.error("-> ERROR postEnsayoI2CSave:", error)
+            res.status(500).json("Falló el ensayo!")
         }
     }
 }

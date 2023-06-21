@@ -111,8 +111,6 @@ digitalController.getEnsayosUsuario = async (req, res) => {
             }
         )
 
-        console.log(data);
-
         if (!data.length) {
             await res.status(404).send("No existen ensayos realizados por este alumno para este laboratorio!")
         } else {
@@ -138,9 +136,6 @@ digitalController.getEnsayosUsuario = async (req, res) => {
                     newEnsayo.index = index + 1
                     newEnsayo.Fecha = ensayo.Fecha
                     newEnsayo.Hora  = ensayo.Hora
-                    // newEnsayo.velocidad     = ensayo.datosEntrada.velocidad
-                    // newEnsayo.pulsadores    = ensayo.datosEntrada.pulsadores
-                    // newEnsayo.mensaje       = ensayo.datosEntrada.mensaje
                     newEnsayo.accion        = ensayo.datosEntrada.accion
                     newEnsayo.frecuencia    = (ensayo.datosEntrada.frecuencia != 1000) ? `${ensayo.datosEntrada.frecuencia} KHz` : `${ensayo.datosEntrada.frecuencia/1000} MHz`
                     newEnsayo.direccion     = ensayo.datosEntrada.direccion

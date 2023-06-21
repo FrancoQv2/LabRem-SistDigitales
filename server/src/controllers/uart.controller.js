@@ -1,8 +1,5 @@
 import { db } from "../index.js"
 
-import { delay } from "../lib/delay.js"
-import axios from "axios"
-
 const idLaboratorio = 1
 
 const queries = {
@@ -47,7 +44,9 @@ uartController.getEnsayosUART = async (req, res) => {
 // Métodos POST
 // -----------------------------------
 
-uartController.postEnsayoUART = (req, res) => {
+uartController.postEnsayoUART = async (req, res) => {
+    console.log(`-\n--> postEnsayoUART - ${JSON.stringify(req.body)}\n---`)
+
     const {
         idUsuario,
         velocidad,
@@ -76,7 +75,10 @@ uartController.postEnsayoUART = (req, res) => {
     ) {
         console.log("La velocidad seteada no es válida")
         res.status(400).json("La velocidad seteada no es válida")
-    } else if (!Array.isArray(pulsadores) || pulsadores.length !== 4){
+    } else if (
+        !Array.isArray(pulsadores) || 
+        pulsadores.length !== 4
+    ){
         res.status(400).json("Los datos de los pulsadores no son válidos")
     } else {
         const datosEntrada = {
@@ -85,17 +87,13 @@ uartController.postEnsayoUART = (req, res) => {
             paridad:    paridad,
             bitsParada: bitsParada,
             pulsadores: pulsadores,
-            mensaje:    mensaje,
-            pulsadores: pulsadores,
             mensaje:    mensaje
         }
 
-        const datosSalida = {
-            indicadores: pulsadores
-        }
+        const datosSalida = {}
 
         try {
-            db.query(
+            await db.query(
                 queries.postEnsayoUART,
                 {
                     replacements: {
@@ -107,10 +105,10 @@ uartController.postEnsayoUART = (req, res) => {
                 }
             )
 
-            res.status(200).json({ msg: "Parámetros correctos. Guardado en DB" })
+            res.status(200).json("Parámetros correctos. Guardado en DB")
         } catch (error) {
             console.error("-> ERROR postEnsayoUART:", error)
-            res.status(500).json({ msg: "Error en postEnsayoUART!" })
+            res.status(500).json("Falló el ensayo!")
         }
     }
 }

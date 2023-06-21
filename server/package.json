@@ -1,11 +1,11 @@
 {
   "name": "labrem-digital",
   "version": "1.0.0",
-  "description": "Servidor Node.js utilizado para las aplicaciones de sistemas Digitales",
+  "description": "Servidor Node.js utilizado para las aplicaciones de Sistemas Digitales",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
     "dev": "NODE_ENV=development nodemon src/index.js"
   },
   "keywords": [],
