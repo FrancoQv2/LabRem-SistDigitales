@@ -83,10 +83,47 @@ digitalController.getEnsayos = async (req, res) => {
             }
         )
 
+        console.log(data)
+
         if (!data.length) {
             await res.status(404).send("No existen ensayos para este laboratorio!")
         } else {
-            await res.status(200).send(data)
+            let dataParsed = []
+
+            if (idLaboratorio == 1) {
+                data.map((ensayo, index) => {
+                    const newEnsayo = {}
+                    newEnsayo.index = index + 1
+                    newEnsayo.idUsuario = ensayo.idUsuario
+
+                    newEnsayo.Fecha = ensayo.Fecha
+                    newEnsayo.Hora  = ensayo.Hora
+                    newEnsayo.velocidad  = ensayo.datosEntrada.velocidad
+                    newEnsayo.bitsDatos  = ensayo.datosEntrada.bitsDatos
+                    newEnsayo.bitsParada = ensayo.datosEntrada.bitsParada
+                    newEnsayo.paridad    = ensayo.datosEntrada.paridad
+                    newEnsayo.pulsadores = ensayo.datosEntrada.pulsadores
+                    newEnsayo.mensaje    = ensayo.datosEntrada.mensaje
+                    dataParsed.push(newEnsayo)
+                })
+            } else if (idLaboratorio == 2) {
+                data.map((ensayo, index) => {
+                    const newEnsayo = {}
+                    newEnsayo.index = index + 1
+                    newEnsayo.idUsuario = ensayo.idUsuario
+                    
+                    newEnsayo.Fecha = ensayo.Fecha
+                    newEnsayo.Hora  = ensayo.Hora
+                    newEnsayo.accion        = ensayo.datosEntrada.accion
+                    newEnsayo.frecuencia    = (ensayo.datosEntrada.frecuencia != 1000) ? `${ensayo.datosEntrada.frecuencia} KHz` : `${ensayo.datosEntrada.frecuencia/1000} MHz`
+                    newEnsayo.direccion     = ensayo.datosEntrada.direccion
+                    newEnsayo.datos         = ensayo.datosEntrada.datos
+                    dataParsed.push(newEnsayo)
+                })
+            }
+            console.log("dataParsed:\n",dataParsed);
+
+            await res.status(200).send(dataParsed)
         }
     } catch (error) {
         console.error("-> ERROR getEnsayos:", error)

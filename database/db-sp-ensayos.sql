@@ -43,6 +43,7 @@ SALIR: BEGIN
     ELSE
 		SELECT 
 			idEnsayo, 
+			idUsuario,
 			DATE_FORMAT(fechaHora,'%d/%m/%y') AS Fecha, 
 			TIME(CONVERT_TZ(fechaHora,'+00:00','-03:00')) AS Hora,
 			datosEntrada,
