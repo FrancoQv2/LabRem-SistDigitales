@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    container_name: labrem-apps-db-digital
+    container_name: labrem-apps-digital-db
     image: mysql:8.0.30
     environment:
       TZ: America/Buenos_Aires
@@ -17,16 +17,16 @@ services:
       - ./database/db-triggers.sql:/docker-entrypoint-initdb.d/b.sql:ro
       - ./database/db-sp-laboratorios.sql:/docker-entrypoint-initdb.d/c.sql:ro
       - ./database/db-sp-ensayos.sql:/docker-entrypoint-initdb.d/d.sql:ro
-      - /home/labrem/_volumes/db-digital:/var/lib/mysql
+      - /home/labrem/_volumes/digital-db:/var/lib/mysql
     networks:
       labrem-network:
         aliases:
-          - labrem-apps-db-digital
+          - labrem-apps-digital-db
   server:
     depends_on:
       - db
-    container_name: labrem-apps-server-digital
-    image: digital-server:1.0
+    container_name: labrem-apps-digital-server
+    image: labrem-apps-digital-server:${VERSION}
     build:
       context: ./server
       no_cache: true
@@ -42,13 +42,14 @@ services:
         EXPOSE 3000
         CMD ["npm","start"]
     environment:
-      NODE_ENV:   production
-      DB_HOST:    labrem-apps-db-digital
-      DB_DIALECT: mysql
-      DB_USER:    ${MYSQL_USER}
-      DB_PASS:    ${MYSQL_PASSWORD}
-      DB_NAME:    ${MYSQL_DATABASE}
-      DB_PORT:    3306
+      NODE_ENV:     production
+      DB_HOST:      labrem-apps-digital-db
+      DB_DIALECT:   mysql
+      DB_USER:      ${MYSQL_USER}
+      DB_PASS:      ${MYSQL_PASSWORD}
+      DB_NAME:      ${MYSQL_DATABASE}
+      DB_PORT:      3306
+      URL_ARDUINO:  ${URL_ARDUINO}
     ports:
       - ${SERVER_PORT}:3000
     restart: always
@@ -57,7 +58,7 @@ services:
     networks:
       labrem-network:
         aliases:
-          - labrem-apps-server-digital
+          - labrem-apps-digital-server
 networks:
   labrem-network:
     name: labrem-network
