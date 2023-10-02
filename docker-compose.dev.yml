@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    container_name: labrem-apps-db-digital
+    container_name: labrem-apps-db-digital-dev
     image: mysql:8.0.30
     environment:
       TZ: America/Buenos_Aires
@@ -17,15 +17,16 @@ services:
       - ./database/db-triggers.sql:/docker-entrypoint-initdb.d/b.sql:ro
       - ./database/db-sp-laboratorios.sql:/docker-entrypoint-initdb.d/c.sql:ro
       - ./database/db-sp-ensayos.sql:/docker-entrypoint-initdb.d/d.sql:ro
+      # - ./database/db-data.sql:/docker-entrypoint-initdb.d/e.sql:ro
       - digital-db:/var/lib/mysql
     networks:
       labrem-network:
         aliases:
-          - labrem-apps-db-digital
+          - labrem-apps-db-digital-dev
   server:
     depends_on:
       - db
-    container_name: labrem-apps-server-digital
+    container_name: labrem-apps-server-digital-dev
     build:
       context: ./server
       no_cache: true
@@ -37,7 +38,7 @@ services:
         CMD ["npm","run","dev"]
     environment:
       NODE_ENV:   development
-      DB_HOST:    labrem-apps-db-digital
+      DB_HOST:    labrem-apps-db-digital-dev
       DB_DIALECT: mysql
       DB_USER:    ${MYSQL_USER}
       DB_PASS:    ${MYSQL_PASSWORD}
@@ -53,13 +54,10 @@ services:
     networks:
       labrem-network:
         aliases:
-          - labrem-apps-server-digital
+          - labrem-apps-server-digital-dev
 networks:
   labrem-network:
-    name: labrem-network
-    driver: bridge
-    ipam:
-      driver: default
+    external: true
 volumes:
   digital-db:
     name: digital-db
