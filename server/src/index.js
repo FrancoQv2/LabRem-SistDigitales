@@ -17,12 +17,14 @@ import { dbConnection } from "./configs/db.config.js"
 
 import digital from "./routes/digital.routes.js"
 
+import fileUpload from "express-fileupload"
+
 // Configuracion de https
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const options = {
-    key: fs.readFileSync(__dirname + "/certs/privkey.pem","ascii"),
-    cert: fs.readFileSync(__dirname +"/certs/cert.pem","ascii")
-}
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const options = {
+//     key: fs.readFileSync(__dirname + "/certs/privkey.pem","ascii"),
+//     cert: fs.readFileSync(__dirname +"/certs/cert.pem","ascii")
+// }
 
 const app = expressServer()
 const PORT = 3000
@@ -35,11 +37,34 @@ app.use(cors())
 
 app.use("/api/digital", digital)
 
+const __dirname = path.resolve()
+app.use(fileUpload())
+app.post('/upload', (req, res) => {
+  if (!req.files || !req.files.file) {
+    return res.status(400).send('No files were uploaded.')
+  }
+
+  const uploadedFile = req.files.file
+  const uploadPath = path.join(__dirname, 'uploads', uploadedFile.name)
+
+  uploadedFile.mv(uploadPath, (err) => {
+    if (err) {
+      return res.status(500).send(err)
+    }
+
+    res.send('File uploaded!')
+  })
+})
+
 // ---------------------------------------------------------------
 
-const server = https.createServer(options, app)
+// const server = https.createServer(options, app)
 
-server.listen(PORT, () => {
+// server.listen(PORT, () => {
+//   console.log(`LabRem Digital - Server on ${PORT}`)
+// })
+
+app.listen(PORT, () => {
   console.log(`LabRem Digital - Server on ${PORT}`)
 })
 
