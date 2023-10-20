@@ -50,7 +50,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - /home/francoq/labrem/digital/server:/usr/src/server
+      - /home/fquevedo/facet/labrem/digital/server:/usr/src/server
     networks:
       labrem-network:
         aliases:
