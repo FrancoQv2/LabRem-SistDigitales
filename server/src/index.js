@@ -44,11 +44,13 @@ app.post('/upload', (req, res) => {
     return res.status(400).send('No files were uploaded.')
   }
 
+  console.log(req.files)
   const uploadedFile = req.files.file
-  const uploadPath = path.join(__dirname, 'uploads', uploadedFile.name)
-
+  const uploadPath = path.join(__dirname, 'uploads', uploadedFile.name) // Debe existir previamente el directorio
+  
   uploadedFile.mv(uploadPath, (err) => {
     if (err) {
+      console.log(err)
       return res.status(500).send(err)
     }
 

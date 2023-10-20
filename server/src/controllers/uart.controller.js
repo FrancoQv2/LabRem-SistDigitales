@@ -1,5 +1,7 @@
 import { db } from "../index.js"
 
+import multer from 'multer'
+
 const idLaboratorio = 1
 
 const queries = {
@@ -112,5 +114,31 @@ uartController.postEnsayoUART = async (req, res) => {
         }
     }
 }
+
+uartController.postUpload = (req, res) => {
+    const form = formidable({ multiples: true });
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Error uploading file' });
+    }
+    const uploadedFile = files.file;
+
+    // Define the destination directory and filename
+    const destinationDir = 'uploads'; // Specify the directory where you want to save the file
+    const filename = `${Date.now()}-${uploadedFile.name}`;
+    const filePath = path.join(process.cwd(), destinationDir, filename);
+    // Move the uploaded file to the destination directory
+    fs.rename(uploadedFile.path, filePath, (error) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).json({ error: 'Error saving file' });
+        }
+  
+        res.status(200).json({ message: 'File uploaded successfully' });
+      });
+    });
+  };
 
 export { uartController }
