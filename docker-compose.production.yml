@@ -37,8 +37,6 @@ services:
         COPY package-lock.json .
         RUN npm ci --omit=dev
         COPY . .
-        RUN apt update \
-            && apt install inetutils-ping
         EXPOSE 3000
         CMD ["npm","start"]
     environment:
@@ -55,13 +53,13 @@ services:
     restart: always
     stdin_open: true
     tty: true
+    volumes:
+      - /home/labrem/certs/cert.pem:/usr/src/server/src/certs/cert.pem
+      - /home/labrem/certs/privkey.pem:/usr/src/server/src/certs/privkey.pem
     networks:
       labrem-network:
         aliases:
           - labrem-apps-digital-server
 networks:
   labrem-network:
-    name: labrem-network
-    driver: bridge
-    ipam:
-      driver: default
+    external: true
